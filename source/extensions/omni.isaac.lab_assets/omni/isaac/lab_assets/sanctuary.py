@@ -21,7 +21,7 @@ Reference: https://github.com/unitreerobotics/unitree_ros
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.actuators import ActuatorNetMLPCfg, DCMotorCfg, ImplicitActuatorCfg
 from omni.isaac.lab.assets.articulation import ArticulationCfg
-from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR
+from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
 
 ##
 # Configuration - Actuators.
@@ -54,7 +54,8 @@ This model is taken from: https://github.com/Improbable-AI/walk-these-ways
 
 UNITREE_A1_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/A1/a1.usd",
+        # usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/A1/a1.usd",
+        usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd",
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
@@ -271,7 +272,8 @@ This configuration removes most collision meshes to speed up simulation.
 
 G1_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/G1/g1.usd",
+        # usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/G1/g1.usd",
+        usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd",
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
@@ -378,9 +380,9 @@ G1_CFG = ArticulationCfg(
 )
 """Configuration for the Unitree G1 Humanoid robot."""
 
-
-G1_MINIMAL_CFG = G1_CFG.copy()
-G1_MINIMAL_CFG.spawn.usd_path = f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/G1/g1_minimal.usd"
+print('ISAACLAB_NUCLEUS_DIR ==>> ', ISAACLAB_NUCLEUS_DIR)
+SANCTUARY_MINIMAL_CFG = G1_CFG.copy()
+SANCTUARY_MINIMAL_CFG.spawn.usd_path = f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd"
 """Configuration for the Unitree G1 Humanoid robot with fewer collision meshes.
 
 This configuration removes most collision meshes to speed up simulation.

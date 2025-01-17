@@ -36,6 +36,7 @@ import omni.isaac.core.utils.prims as prim_utils
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 
+print('===>>>', ISAAC_NUCLEUS_DIR)
 
 def design_scene():
     """Designs the scene by spawning ground plane, light, objects and meshes from usd files."""

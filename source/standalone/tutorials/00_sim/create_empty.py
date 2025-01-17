@@ -18,6 +18,7 @@
 import argparse
 
 from omni.isaac.lab.app import AppLauncher
+# AppLauncher is a wrapper for SimulationApp to configure the extensions we want to load to the simulationand the startup options and configuration
 
 # create argparser
 parser = argparse.ArgumentParser(description="Tutorial on creating an empty stage.")
@@ -27,7 +28,8 @@ AppLauncher.add_app_launcher_args(parser)
 args_cli = parser.parse_args()
 # launch omniverse app
 app_launcher = AppLauncher(args_cli)
-simulation_app = app_launcher.app
+# launch the simulation. We run it here then we can add python modules to it that comes next
+simulation_app = app_launcher.app 
 
 """Rest everything follows."""
 
