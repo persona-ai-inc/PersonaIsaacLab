@@ -63,21 +63,8 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     # cfg = sim_utils.UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd")
     # cfg.func("/World/Robots/Sanct", cfg, translation=(0.0, 0.0, 0.01))
 
-    
-    cfg2 = sim_utils.UrdfFileCfg(
-        fix_base=True,
-        merge_fixed_joints=False,
-        make_instanceable=False,
-        asset_path="/home/oheidari/java-repos/ihmc-software/repository-group/valkyrie/bin/main/models/val_description/urdf/valkyrie_sim.urdf",
-        articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-            enabled_self_collisions=True, 
-            solver_position_iteration_count=4, 
-            solver_velocity_iteration_count=0
-        ),
-    )
-    cfg2.func("/World/Robots/Valk2", cfg2, translation=(1.0, 0.0, 1.0))
-
     valkCfg = VALKYRIE_CFG.copy()
+    valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
 
     # to get the parent of the asset root path
@@ -85,25 +72,21 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     assets_root_path = get_assets_root_path()
     print('===> assets_root_path: ', assets_root_path)
 
-    cartpole_cfg = CARTPOLE_CFG.copy()
-    cartpole_cfg.prim_path = "/World/Origin.*/Robot"
-    cartpole = Articulation(cfg=cartpole_cfg)
-
     # Create separate groups called "Origin1", "Origin2"
     # Each group will have a robot in it
     origins = [[0.0, 0.0, 0.0], [-1.0, 0.0, 0.0]]
     # Origin 1
-    prim_utils.create_prim("/World/Origin1", "Xform", translation=origins[0])
-    # Origin 2
-    prim_utils.create_prim("/World/Origin2", "Xform", translation=origins[1])
+    # prim_utils.create_prim("/World/Origin1", "Xform", translation=origins[0])
+    # # Origin 2
+    # prim_utils.create_prim("/World/Origin2", "Xform", translation=origins[1])
 
     # Articulation
-    cartpole_cfg = CARTPOLE_CFG.copy()
-    cartpole_cfg.prim_path = "/World/Origin.*/Robot"
-    cartpole = Articulation(cfg=cartpole_cfg)
+    # cartpole_cfg = CARTPOLE_CFG.copy()
+    # cartpole_cfg.prim_path = "/World/Origin.*/Robot"
+    # cartpole = Articulation(cfg=cartpole_cfg)
 
     # return the scene information
-    scene_entities = {"cartpole": cartpole, "valkyrie": valkyrie}
+    scene_entities = {"valkyrie": valkyrie}
 
 
     return scene_entities, origins
@@ -114,7 +97,9 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     # Extract scene entities
     # note: we only do this here for readability. In general, it is better to access the entities directly from
     #   the dictionary. This dictionary is replaced by the InteractiveScene class in the next tutorial.
-    robot = entities["cartpole"]
+    robot = entities["valkyrie"]
+    joint_names = robot.joint_names
+    right_elbow_pitch_index = joint_names.index('rightElbowPitch')
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
     count = 0
@@ -129,19 +114,22 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
             # we offset the root state by the origin since the states are written in simulation world frame
             # if this is not done, then the robots will be spawned at the (0, 0, 0) of the simulation world
             root_state = robot.data.default_root_state.clone()
-            root_state[:, :3] += origins
-            robot.write_root_link_pose_to_sim(root_state[:, :7])
-            robot.write_root_com_velocity_to_sim(root_state[:, 7:])
+            # root_state[:, :3] += origins
+            # robot.write_root_link_pose_to_sim(root_state[:, :7])
+            # robot.write_root_com_velocity_to_sim(root_state[:, 7:])
             # set joint positions with some noise
             joint_pos, joint_vel = robot.data.default_joint_pos.clone(), robot.data.default_joint_vel.clone()
-            joint_pos += torch.rand_like(joint_pos) * 0.1
+            print('joint pos size: ', joint_pos.size())
+            # joint_pos[0,25] += 0.5
             robot.write_joint_state_to_sim(joint_pos, joint_vel)
             # clear internal buffers
             robot.reset()
             print("[INFO]: Resetting robot state...")
         # Apply random action
         # -- generate random joint efforts
-        efforts = torch.randn_like(robot.data.joint_pos) * 5.0
+        # efforts = torch.randn_like(robot.data.joint_pos) * 5.0
+        efforts = torch.zeros_like(robot.data.joint_pos)
+        efforts[0, 25] = 40.0
         # -- apply action to the robot
         robot.set_joint_effort_target(efforts)
         # -- write data to sim

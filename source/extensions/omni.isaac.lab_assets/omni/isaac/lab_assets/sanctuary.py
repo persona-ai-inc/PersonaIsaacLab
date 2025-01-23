@@ -55,7 +55,7 @@ This model is taken from: https://github.com/Improbable-AI/walk-these-ways
 UNITREE_A1_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
         # usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/A1/a1.usd",
-        usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd",
+        usd_path=f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd",
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
             disable_gravity=False,
@@ -272,7 +272,6 @@ This configuration removes most collision meshes to speed up simulation.
 
 G1_CFG = ArticulationCfg(
     spawn=sim_utils.UsdFileCfg(
-        # usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/Unitree/G1/g1.usd",
         usd_path=f"{ISAACLAB_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd",
         activate_contact_sensors=True,
         rigid_props=sim_utils.RigidBodyPropertiesCfg(
@@ -380,7 +379,6 @@ G1_CFG = ArticulationCfg(
 )
 """Configuration for the Unitree G1 Humanoid robot."""
 
-print('ISAACLAB_NUCLEUS_DIR ==>> ', ISAACLAB_NUCLEUS_DIR)
 SANCTUARY_MINIMAL_CFG = G1_CFG.copy()
 SANCTUARY_MINIMAL_CFG.spawn.usd_path = f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd"
 """Configuration for the Unitree G1 Humanoid robot with fewer collision meshes.

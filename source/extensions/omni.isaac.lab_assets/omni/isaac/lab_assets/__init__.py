@@ -41,3 +41,4 @@ from .shadow_hand import *
 from .unitree import *
 from .universal_robots import *
 from .sanctuary import *
+from .valkyrie import *

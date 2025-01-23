@@ -33,10 +33,9 @@ an example of an environment is here. It is important to pay attention to the di
 └── rough_env_cfg.py
 ```
 
-
 Here is the scene setup:        
 `/home/oheidari/IsaacLab/source/extensions/omni.isaac.lab_assets/omni/isaac/lab_assets/unitree.py`
-which gets loaded by one of the config files above.
+which gets loaded by one of the config files above. In that directory, I created `Sanctuary.py`
 
 Each env should have its own `configclass` which can include:      
 * simulation parameters
@@ -50,3 +49,14 @@ you can find config in this file:
 so if you want to set the robot usd/urdf:       
 `self.scene.robot = G1_MINIMAL_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")`
 
+
+
+## view usd file
+[a quick viewer for usd file](https://docs.omniverse.nvidia.com/usd/latest/usdview/quickstart.html)
+
+download the zip file for Linux and run the following script from the root of extracted directory:
+
+`./scripts/usdview_gui.sh`
+
+you can drag usd file to it, also you can open the gui with a usd file arg:
+`./scripts/usdview_gui.sh <path_to_file.usd>`
