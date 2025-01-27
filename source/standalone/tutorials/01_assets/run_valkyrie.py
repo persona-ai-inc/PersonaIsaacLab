@@ -63,7 +63,7 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     # cfg = sim_utils.UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd")
     # cfg.func("/World/Robots/Sanct", cfg, translation=(0.0, 0.0, 0.01))
 
-    valkCfg = VALKYRIE_CFG.copy()
+    valkCfg = VALKYRIE_CFG.copy() # type: ignore
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
 
@@ -148,7 +148,7 @@ def main():
     sim_cfg = sim_utils.SimulationCfg(device=args_cli.device)
     sim = SimulationContext(sim_cfg)
     # Set main camera
-    sim.set_camera_view([2.5, 0.0, 4.0], [0.0, 0.0, 2.0])
+    sim.set_camera_view((2.5, 0.0, 4.0), (0.0, 0.0, 2.0))
     # Design scene
     scene_entities, scene_origins = design_scene()
     scene_origins = torch.tensor(scene_origins, device=sim.device)
