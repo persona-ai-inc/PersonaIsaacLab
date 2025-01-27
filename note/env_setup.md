@@ -66,4 +66,5 @@ We need the urdf file of the Valkyrie robot. That exists in a separete repo with
 Download [valkyrie repo](https://github.com/ihmcrobotics/valkyrie.git). Then, look for `val_description` package in that repo.      
 
 In my local system, the urdf exists in:     
-`/home/oheidari/java-repos/ihmc-software/repository-group/valkyrie/bin/main/models/val_description/urdf/valkyrie_sim.urdf`
+`/home/oheidari/java-repos/ihmc-software/repository-group/valkyrie/bin/main/models/val_description/urdf/valkyrie_sim.urdf`      
+This is the value for `asset_path` arg when you import the urdf file with `sim_utils.UrdfFileCfg()`     
