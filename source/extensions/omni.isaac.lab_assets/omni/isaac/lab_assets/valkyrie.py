@@ -23,16 +23,18 @@ from omni.isaac.lab.actuators import ActuatorNetMLPCfg, DCMotorCfg, ImplicitActu
 from omni.isaac.lab.assets.articulation import ArticulationCfg
 from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
 
-##
-# Configuration - Actuators.
-##
+import os
+
+# get current path, remove everything after "personaisaaclab"
+root_folder_path = os.getcwd().split("PersonaIsaacLab")[0] + "PersonaIsaacLab/"
 
 VALKYRIE_CFG = ArticulationCfg(
     spawn=sim_utils.UrdfFileCfg(
         fix_base=True,
         merge_fixed_joints=False,
         make_instanceable=False,
-        asset_path="/home/jacob/Documents/valkyrie/src/main/resources/models/val_description/urdf/valkyrie_sim.urdf",
+        # TODO make this prettier somehow.
+        asset_path=root_folder_path + "external/valkyrie/src/main/resources/models/val_description/urdf/valkyrie_sim.urdf",
         articulation_props=sim_utils.ArticulationRootPropertiesCfg(
             enabled_self_collisions=True, 
             solver_position_iteration_count=4, 
