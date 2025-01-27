@@ -13,7 +13,7 @@ print(dict['__version__'])
 print(dict['__globals__'])
 
 
-print(dict['root'][0][0][0][0][0])
+# print(dict['root'][0][0][0][0][0])
 
 # [[(array([[(array([[-0.00024396]
                    
@@ -21,5 +21,8 @@ print(dict['root'][0][0][0][0][0])
 
 import numpy as np 
 
-# a = np.array([1,2,3])
-# print([a])
+data = dict['root'][0][0][0][0][0]
+print("number of steps: ", len(data))
+
+print(data[0].shape)
+print(data[0])
