@@ -47,6 +47,10 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 ##
 from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
 
+from parse_ihmc import ParseIHMC
+from pathlib import Path
+path = Path('/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat')
+ihmc = ParseIHMC(path, 'valkyrie')
 
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
@@ -103,10 +107,11 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
     count = 0
+    
     # Simulation loop
     while simulation_app.is_running():
         # Reset
-        if count % 500 == 0:
+        if count % ihmc.num_time_steps == 0:
             # reset counter
             count = 0
             # reset the scene entities
@@ -121,17 +126,24 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
             joint_pos, joint_vel = robot.data.default_joint_pos.clone(), robot.data.default_joint_vel.clone()
             print('joint pos size: ', joint_pos.size())
             # joint_pos[0,25] += 0.5
-            robot.write_joint_state_to_sim(joint_pos, joint_vel)
+            joint_pos, joint_vel, joint_effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+            robot.write_joint_state_to_sim(torch.from_numpy(joint_pos), torch.from_numpy(joint_vel) )
             # clear internal buffers
             robot.reset()
             print("[INFO]: Resetting robot state...")
         # Apply random action
         # -- generate random joint efforts
+<<<<<<< Updated upstream
         efforts = torch.randn_like(robot.data.joint_pos) * 5.0
         #efforts = torch.zeros_like(robot.data.joint_pos)
         #efforts[0, 25] = 40.0
+=======
+        # efforts = torch.randn_like(robot.data.joint_pos) 
+        q, qd, efforts = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+        # efforts[0, 25] = 40.0
+>>>>>>> Stashed changes
         # -- apply action to the robot
-        robot.set_joint_effort_target(efforts)
+        robot.set_joint_effort_target(torch.from_numpy(efforts))
         # -- write data to sim
         robot.write_data_to_sim()
         # Perform step
