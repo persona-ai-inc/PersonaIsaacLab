@@ -24,12 +24,8 @@ VALKYRIE_CFG = ArticulationCfg(
         merge_fixed_joints=False,
         make_instanceable=False,
         # TODO make this prettier somehow.
-<<<<<<< Updated upstream
         asset_path=root_folder_path
         + "external/valkyrie/src/main/resources/models/val_description/urdf/valkyrie_sim.urdf",
-=======
-        asset_path="/home/oheidari/java-repos/ihmc-software/repository-group/valkyrie/bin/main/models/val_description/urdf/valkyrie_sim.urdf",
->>>>>>> Stashed changes
         articulation_props=sim_utils.ArticulationRootPropertiesCfg(
             enabled_self_collisions=True,
             solver_position_iteration_count=4,
@@ -37,11 +33,7 @@ VALKYRIE_CFG = ArticulationCfg(
         ),
     ),
     init_state=ArticulationCfg.InitialStateCfg(
-<<<<<<< Updated upstream
         pos=(0.0, 0.0, 1.0),
-=======
-        pos=(0.0, 0.0, 0.5),
->>>>>>> Stashed changes
         joint_vel={".*": 0.0},
     ),
     soft_joint_pos_limit_factor=0.9,
