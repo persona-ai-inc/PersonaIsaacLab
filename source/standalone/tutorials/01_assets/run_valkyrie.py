@@ -42,7 +42,7 @@ from omni.isaac.lab.sim import SimulationContext
 
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 
-##
+## 
 # Pre-defined configs
 ##
 from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
@@ -127,9 +127,9 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
             print("[INFO]: Resetting robot state...")
         # Apply random action
         # -- generate random joint efforts
-        # efforts = torch.randn_like(robot.data.joint_pos) * 5.0
-        efforts = torch.zeros_like(robot.data.joint_pos)
-        efforts[0, 25] = 40.0
+        efforts = torch.randn_like(robot.data.joint_pos) * 5.0
+        #efforts = torch.zeros_like(robot.data.joint_pos)
+        #efforts[0, 25] = 40.0
         # -- apply action to the robot
         robot.set_joint_effort_target(efforts)
         # -- write data to sim

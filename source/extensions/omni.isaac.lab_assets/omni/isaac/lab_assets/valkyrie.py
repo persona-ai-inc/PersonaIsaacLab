@@ -20,7 +20,7 @@ root_folder_path = os.getcwd().split("PersonaIsaacLab")[0] + "PersonaIsaacLab/"
 
 VALKYRIE_CFG = ArticulationCfg(
     spawn=sim_utils.UrdfFileCfg(
-        fix_base=True,
+        fix_base=False,
         merge_fixed_joints=False,
         make_instanceable=False,
         # TODO make this prettier somehow.
@@ -32,6 +32,11 @@ VALKYRIE_CFG = ArticulationCfg(
             solver_velocity_iteration_count=0,
         ),
     ),
+    init_state=ArticulationCfg.InitialStateCfg(
+        pos=(0.0, 0.0, 1.0),
+        joint_vel={".*": 0.0},
+    ),
+    soft_joint_pos_limit_factor=0.9,
     actuators={
         "torsoYaw": ImplicitActuatorCfg(
             joint_names_expr=["torsoYaw"],
