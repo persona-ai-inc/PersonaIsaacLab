@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from omni.isaac.lab_assets import VALKYRIE_CFG, VALKYRIE_CFG_NO_HAND_ACTUATOR
+from omni.isaac.lab_assets import VALKYRIE_CFG, VALKYRIE_CFG_NO_HANDS
 
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.assets import ArticulationCfg
@@ -23,11 +23,11 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     # env
     episode_length_s = 15.0
     decimation = 2
-    action_scale = 1.0
+    action_scale = 0.0
     #action_space = 59 # with hands and wrists
     #observation_space = 189 # with hands and wrists
-    action_space = 29 # without hands and wrist
-    observation_space = 159 # without hands and wrist
+    action_space = 33 # without hands and wrist
+    observation_space = 111 # without hands and wrist
     state_space = 0
 
     # simulation
@@ -54,7 +54,7 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     )
 
     # robot
-    robot: ArticulationCfg = VALKYRIE_CFG_NO_HAND_ACTUATOR.replace(prim_path="/World/envs/env_.*/Robot")  # type: ignore
+    robot: ArticulationCfg = VALKYRIE_CFG_NO_HANDS.replace(prim_path="/World/envs/env_.*/Robot")  # type: ignore
     # joint_gears: list = [
     #     67.5000,  # lower_waist
     #     67.5000,  # lower_waist
@@ -81,32 +81,32 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     # @jacob-zietek: I have no clue if this is right, so I set it to the default values.
     # This is as if each joint is directly connected to the motor.
     joint_gears: list = [
-        1.0,  # torsoYaw
-        1.0,  # torsoPitch
-        1.0,  # torsoRoll
-        1.0,  # lowerNeckPitch
-        1.0,  # neckYaw
-        1.0,  # upperNeckPitch
+        190.0,  # torsoYaw
+        350.0,  # torsoPitch
+        150.0,  # torsoRoll
+        26.0,  # lowerNeckPitch
+        26.0,  # neckYaw
+        26.0,  # upperNeckPitch
         1.0,  # hokuyo_joint
-        1.0,  # rightHipYaw
-        1.0,  # rightHipRoll
-        1.0,  # rightHipPitch
-        1.0,  # rightKneePitch
-        1.0,  # rightAnklePitch
-        1.0,  # rightAnkleRoll
-        1.0,  # leftHipYaw
-        1.0,  # leftHipRoll
-        1.0,  # leftHipPitch
-        1.0,  # leftKneePitch
-        1.0,  # leftAnklePitch
-        1.0,  # leftAnkleRoll
-        1.0,  # rightShoulderPitch
-        1.0,  # rightShoulderRoll
-        1.0,  # rightShoulderYaw
-        1.0,  # rightElbowPitch
-        1.0,  # rightForearmYaw
-        # 1.0,  # rightWristRoll
-        # 1.0,  # rightWristPitch
+        190.0,  # rightHipYaw
+        350.0,  # rightHipRoll
+        350.0,  # rightHipPitch
+        350.0,  # rightKneePitch
+        205.0,  # rightAnklePitch
+        205.0,  # rightAnkleRoll
+        190.0,  # leftHipYaw
+        350.0,  # leftHipRoll
+        350.0,  # leftHipPitch
+        350.0,  # leftKneePitch
+        205.0,  # leftAnklePitch
+        205.0,  # leftAnkleRoll
+        350.0,  # rightShoulderPitch
+        350.0,  # rightShoulderRoll
+        65.0,  # rightShoulderYaw
+        65.0,  # rightElbowPitch
+        26.0,  # rightForearmYaw
+        14.0,  # rightWristRoll
+        14.0,  # rightWristPitch
         # 1.0,  # rightThumbRoll
         # 1.0,  # rightThumbPitch1
         # 1.0,  # rightThumbPitch2
@@ -120,13 +120,13 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
         # 1.0,  # rightPinkyPitch1
         # 1.0,  # rightPinkyPitch2
         # 1.0,  # rightPinkyPitch3
-        1.0,  # leftShoulderPitch
-        1.0,  # leftShoulderRoll
-        1.0,  # leftShoulderYaw
-        1.0,  # leftElbowPitch
-        1.0,  # leftForearmYaw
-        # 1.0,  # leftWristRoll
-        # 1.0,  # leftWristPitch
+        190.0,  # leftShoulderPitch
+        350.0,  # leftShoulderRoll
+        65.0,  # leftShoulderYaw
+        65.0,  # leftElbowPitch
+        26.0,  # leftForearmYaw
+        14.0,  # leftWristRoll
+        14.0,  # leftWristPitch
         # 1.0,  # leftThumbRoll
         # 1.0,  # leftThumbPitch1
         # 1.0,  # leftThumbPitch2

@@ -476,7 +476,7 @@ VALKYRIE_CFG = ArticulationCfg(
     },
 )
 
-VALKYRIE_CFG_NO_HAND_ACTUATOR = ArticulationCfg(
+VALKYRIE_CFG_NO_HANDS = ArticulationCfg(
     spawn=sim_utils.UrdfFileCfg(
         fix_base=False,
         merge_fixed_joints=False,
