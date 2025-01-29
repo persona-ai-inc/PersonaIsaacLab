@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from omni.isaac.lab_assets import VALKYRIE_CFG
+from omni.isaac.lab_assets import VALKYRIE_CFG, VALKYRIE_CFG_NO_HAND_ACTUATOR
 
 import omni.isaac.lab.sim as sim_utils
 from omni.isaac.lab.assets import ArticulationCfg
@@ -24,8 +24,10 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     episode_length_s = 15.0
     decimation = 2
     action_scale = 1.0
-    action_space = 59
-    observation_space = 189
+    #action_space = 59 # with hands and wrists
+    #observation_space = 189 # with hands and wrists
+    action_space = 29 # without hands and wrist
+    observation_space = 159 # without hands and wrist
     state_space = 0
 
     # simulation
@@ -46,11 +48,13 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
 
     # scene
     scene: InteractiveSceneCfg = InteractiveSceneCfg(
-        num_envs=4096, env_spacing=4.0, replicate_physics=True
+        #num_envs=4096, env_spacing=4.0, replicate_physics=True
+        num_envs=1024, env_spacing=4.0, replicate_physics=True
+        #num_envs=2048, env_spacing=4.0, replicate_physics=True
     )
 
     # robot
-    robot: ArticulationCfg = VALKYRIE_CFG.replace(prim_path="/World/envs/env_.*/Robot")  # type: ignore
+    robot: ArticulationCfg = VALKYRIE_CFG_NO_HAND_ACTUATOR.replace(prim_path="/World/envs/env_.*/Robot")  # type: ignore
     # joint_gears: list = [
     #     67.5000,  # lower_waist
     #     67.5000,  # lower_waist
@@ -101,41 +105,41 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
         1.0,  # rightShoulderYaw
         1.0,  # rightElbowPitch
         1.0,  # rightForearmYaw
-        1.0,  # rightWristRoll
-        1.0,  # rightWristPitch
-        1.0,  # rightThumbRoll
-        1.0,  # rightThumbPitch1
-        1.0,  # rightThumbPitch2
-        1.0,  # rightThumbPitch3
-        1.0,  # rightIndexFingerPitch1
-        1.0,  # rightIndexFingerPitch2
-        1.0,  # rightIndexFingerPitch3
-        1.0,  # rightMiddleFingerPitch1
-        1.0,  # rightMiddleFingerPitch2
-        1.0,  # rightMiddleFingerPitch3
-        1.0,  # rightPinkyPitch1
-        1.0,  # rightPinkyPitch2
-        1.0,  # rightPinkyPitch3
+        # 1.0,  # rightWristRoll
+        # 1.0,  # rightWristPitch
+        # 1.0,  # rightThumbRoll
+        # 1.0,  # rightThumbPitch1
+        # 1.0,  # rightThumbPitch2
+        # 1.0,  # rightThumbPitch3
+        # 1.0,  # rightIndexFingerPitch1
+        # 1.0,  # rightIndexFingerPitch2
+        # 1.0,  # rightIndexFingerPitch3
+        # 1.0,  # rightMiddleFingerPitch1
+        # 1.0,  # rightMiddleFingerPitch2
+        # 1.0,  # rightMiddleFingerPitch3
+        # 1.0,  # rightPinkyPitch1
+        # 1.0,  # rightPinkyPitch2
+        # 1.0,  # rightPinkyPitch3
         1.0,  # leftShoulderPitch
         1.0,  # leftShoulderRoll
         1.0,  # leftShoulderYaw
         1.0,  # leftElbowPitch
         1.0,  # leftForearmYaw
-        1.0,  # leftWristRoll
-        1.0,  # leftWristPitch
-        1.0,  # leftThumbRoll
-        1.0,  # leftThumbPitch1
-        1.0,  # leftThumbPitch2
-        1.0,  # leftThumbPitch3
-        1.0,  # leftIndexFingerPitch1
-        1.0,  # leftIndexFingerPitch2
-        1.0,  # leftIndexFingerPitch3
-        1.0,  # leftMiddleFingerPitch1
-        1.0,  # leftMiddleFingerPitch2
-        1.0,  # leftMiddleFingerPitch3
-        1.0,  # leftPinkyPitch1
-        1.0,  # leftPinkyPitch2
-        1.0,  # leftPinkyPitch3
+        # 1.0,  # leftWristRoll
+        # 1.0,  # leftWristPitch
+        # 1.0,  # leftThumbRoll
+        # 1.0,  # leftThumbPitch1
+        # 1.0,  # leftThumbPitch2
+        # 1.0,  # leftThumbPitch3
+        # 1.0,  # leftIndexFingerPitch1
+        # 1.0,  # leftIndexFingerPitch2
+        # 1.0,  # leftIndexFingerPitch3
+        # 1.0,  # leftMiddleFingerPitch1
+        # 1.0,  # leftMiddleFingerPitch2
+        # 1.0,  # leftMiddleFingerPitch3
+        # 1.0,  # leftPinkyPitch1
+        # 1.0,  # leftPinkyPitch2
+        # 1.0,  # leftPinkyPitch3
     ]
 
     heading_weight: float = 0.5
