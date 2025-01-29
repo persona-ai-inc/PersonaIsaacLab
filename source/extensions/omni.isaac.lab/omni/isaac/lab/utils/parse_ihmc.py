@@ -65,7 +65,8 @@ class ParseIHMC:
         for i, x in enumerate(fields):
             q, r = divmod(i, 3)
             if r == 0:
-                names.append(x.split('_')[1])
+                indx = x.find('_')
+                names.append(x[indx+1:])
 
         return names
 
@@ -108,6 +109,32 @@ class ParseIHMC:
     def getStateTorqueOneTimeStepAllJoints(self, time_step):
         return self.q[time_step, :], self.qd[time_step, :], self.tau[time_step, :]
 
+    def setJointOrder(self, joints: list[str]) -> None:
+        """set the order of the joints. The exported joints order from ihmc does not necessarily
+        match the the joint order in Isaac Sim. bfs search algorithm used in Isaac Sim
+        https://isaac-sim.github.io/IsaacLab/main/source/migration/migrating_from_isaacgymenvs.html#:~:text=Isaac%20Lab%20APIs.-,Articulation%20Joint%20Order,-%23
+
+        Args:
+            joints: a list of joint names in a desired order
+        """
+
+        for index_new, joint in enumerate(joints):
+            index_old = self.joint_names.index(joint)
+
+            temp = self.q[:,index_new]
+            self.q[:,index_new] = self.q[:,index_old]
+            self.q[:,index_old] = temp
+
+            temp = self.qd[:,index_new]
+            self.qd[:,index_new] = self.qd[:,index_old]
+            self.qd[:,index_old] = temp
+
+            temp = self.tau[:,index_new]
+            self.tau[:,index_new] = self.tau[:,index_old]
+            self.tau[:,index_old] = temp
+
+        self.joint_names = joints
+
     def plotJointPosition(self, joint_name):
         """ Plot position of a given joint over time"""
         
@@ -120,7 +147,14 @@ class ParseIHMC:
 
     def plotJointVelocity(self, joint_name):
         """ Plot velocity of a given joint over time"""
-        pass
+        
+        index = self.joint_names.index(joint_name)
+        plt.plot(range(self.num_time_steps), self.qd[:,index])
+        plt.xlabel('time')
+        plt.ylabel('velocity')
+        plt.title(joint_name)
+        plt.show()
+    
     def plotJointTorque(self, joint_name):
         """ Plot torque of a given joint over time"""
         
@@ -132,16 +166,18 @@ class ParseIHMC:
         plt.show()
 
 if __name__ == '__main__':
-
+    print('inja 1')
     path = Path('/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat')
-    parser = ParseIHMC(path, 'valkyrie')
-    print(parser.joint_names)
+    ihmc = ParseIHMC(path, 'valkyrie')
+    print(ihmc.joint_names)
+    print('inja 2')
 
-    q, qd, tau = parser.getStateTorque("leftElbowPitch", np.array([0,1,2,4,5]))
+    q, qd, tau = ihmc.getStateTorque("leftElbowPitch", np.array([0,1,2,4,5]))
     print(q)    
     print(qd)    
     print(tau)    
+    print('inja 3')
 
-    parser.plotJointPosition('leftKneePitch')    
-    # parser.plotJointPosition('rightAnkleRoll')    
+    ihmc.plotJointPosition('leftKneePitch')    
+    # ihmc.plotJointPosition('rightAnkleRoll')    
 

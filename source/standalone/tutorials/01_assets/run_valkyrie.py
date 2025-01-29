@@ -21,10 +21,9 @@ from pathlib import Path
 from omni.isaac.lab.app import AppLauncher
 from omni.isaac.lab.utils import ParseIHMC
 
-path = '/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat'
-
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on spawning and interacting with an articulation.")
+path = '/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat'
 parser.add_argument("--ihmc_joint_states_file", default=path, type=str, help="joint_states file exported from ihmc")
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
@@ -51,9 +50,6 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 # Pre-defined configs
 ##
 from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
-
-
-
 
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
@@ -101,6 +97,7 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     #   the dictionary. This dictionary is replaced by the InteractiveScene class in the next tutorial.
     robot = entities["valkyrie"]
     joint_names = robot.joint_names
+    print(joint_names)
     right_elbow_pitch_index = joint_names.index('rightElbowPitch')
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
@@ -162,8 +159,16 @@ def main():
     print("[INFO]: Setup complete...")
 
     # create ihmc parser
-    ihmc = ParseIHMC(Path(args_cli.path), 'valkyrie')
+    ihmc = ParseIHMC(Path(args_cli.ihmc_joint_states_file), 'valkyrie')
+    joint_names = scene_entities["valkyrie"].joint_names
+    
+    print(ihmc.joint_names)
+    print(joint_names)
 
+    ihmc.setJointOrder(joint_names)
+
+    print(ihmc.joint_names)
+    
     # Run the simulator
     run_simulator(sim, scene_entities, scene_origins, ihmc)
 
