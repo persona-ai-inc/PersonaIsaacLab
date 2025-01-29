@@ -16,11 +16,16 @@
 
 
 import argparse
+from pathlib import Path
 
 from omni.isaac.lab.app import AppLauncher
+from omni.isaac.lab.utils import ParseIHMC
+
+path = '/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat'
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on spawning and interacting with an articulation.")
+parser.add_argument("--ihmc_joint_states_file", default=path, type=str, help="joint_states file exported from ihmc")
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
 # parse the arguments
@@ -47,10 +52,8 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 ##
 from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
 
-from parse_ihmc import ParseIHMC
-from pathlib import Path
-path = Path('/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat')
-ihmc = ParseIHMC(path, 'valkyrie')
+
+
 
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
@@ -70,11 +73,6 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     valkCfg = VALKYRIE_CFG.copy() # type: ignore
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
-
-    # to get the parent of the asset root path
-    from omni.isaac.core.utils.nucleus import get_assets_root_path
-    assets_root_path = get_assets_root_path()
-    print('===> assets_root_path: ', assets_root_path)
 
     # Create separate groups called "Origin1", "Origin2"
     # Each group will have a robot in it
@@ -96,7 +94,7 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     return scene_entities, origins
 
 
-def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articulation], origins: torch.Tensor):
+def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articulation], origins: torch.Tensor, ihmc: ParseIHMC):
     """Runs the simulation loop."""
     # Extract scene entities
     # note: we only do this here for readability. In general, it is better to access the entities directly from
@@ -162,8 +160,12 @@ def main():
     sim.reset()
     # Now we are ready!
     print("[INFO]: Setup complete...")
+
+    # create ihmc parser
+    ihmc = ParseIHMC(Path(args_cli.path), 'valkyrie')
+
     # Run the simulator
-    run_simulator(sim, scene_entities, scene_origins)
+    run_simulator(sim, scene_entities, scene_origins, ihmc)
 
 
 if __name__ == "__main__":

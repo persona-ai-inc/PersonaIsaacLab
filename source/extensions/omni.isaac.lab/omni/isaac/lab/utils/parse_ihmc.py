@@ -115,6 +115,7 @@ class ParseIHMC:
         plt.plot(range(self.num_time_steps), self.q[:,index])
         plt.xlabel('time')
         plt.ylabel('position')
+        plt.title(joint_name)
         plt.show()
 
     def plotJointVelocity(self, joint_name):
@@ -122,7 +123,13 @@ class ParseIHMC:
         pass
     def plotJointTorque(self, joint_name):
         """ Plot torque of a given joint over time"""
-        pass
+        
+        index = self.joint_names.index(joint_name)
+        plt.plot(range(self.num_time_steps), self.tau[:,index])
+        plt.xlabel('time')
+        plt.ylabel('torque')
+        plt.title(joint_name)
+        plt.show()
 
 if __name__ == '__main__':
 
