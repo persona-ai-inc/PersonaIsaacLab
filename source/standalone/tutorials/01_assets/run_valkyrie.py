@@ -16,11 +16,16 @@
 
 
 import argparse
+from pathlib import Path
 
 from omni.isaac.lab.app import AppLauncher
+from omni.isaac.lab.utils import ParseIHMC
+
+path = '/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat'
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on spawning and interacting with an articulation.")
+parser.add_argument("--ihmc_joint_states_file", default=path, type=str, help="joint_states file exported from ihmc")
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
 # parse the arguments
@@ -48,6 +53,8 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
 
 
+
+
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
     # Ground-plane
@@ -66,11 +73,6 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     valkCfg = VALKYRIE_CFG.copy() # type: ignore
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
-
-    # to get the parent of the asset root path
-    from omni.isaac.core.utils.nucleus import get_assets_root_path
-    assets_root_path = get_assets_root_path()
-    print('===> assets_root_path: ', assets_root_path)
 
     # Create separate groups called "Origin1", "Origin2"
     # Each group will have a robot in it
@@ -92,7 +94,7 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     return scene_entities, origins
 
 
-def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articulation], origins: torch.Tensor):
+def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articulation], origins: torch.Tensor, ihmc: ParseIHMC):
     """Runs the simulation loop."""
     # Extract scene entities
     # note: we only do this here for readability. In general, it is better to access the entities directly from
@@ -103,10 +105,11 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
     count = 0
+    
     # Simulation loop
     while simulation_app.is_running():
         # Reset
-        if count % 500 == 0:
+        if count % ihmc.num_time_steps == 0:
             # reset counter
             count = 0
             # reset the scene entities
@@ -121,17 +124,18 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
             joint_pos, joint_vel = robot.data.default_joint_pos.clone(), robot.data.default_joint_vel.clone()
             print('joint pos size: ', joint_pos.size())
             # joint_pos[0,25] += 0.5
-            robot.write_joint_state_to_sim(joint_pos, joint_vel)
+            joint_pos, joint_vel, joint_effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+            robot.write_joint_state_to_sim(torch.from_numpy(joint_pos), torch.from_numpy(joint_vel) )
             # clear internal buffers
             robot.reset()
             print("[INFO]: Resetting robot state...")
         # Apply random action
         # -- generate random joint efforts
-        efforts = torch.randn_like(robot.data.joint_pos) * 5.0
-        #efforts = torch.zeros_like(robot.data.joint_pos)
-        #efforts[0, 25] = 40.0
+        # efforts = torch.randn_like(robot.data.joint_pos) 
+        q, qd, efforts = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+        # efforts[0, 25] = 40.0
         # -- apply action to the robot
-        robot.set_joint_effort_target(efforts)
+        robot.set_joint_effort_target(torch.from_numpy(efforts))
         # -- write data to sim
         robot.write_data_to_sim()
         # Perform step
@@ -156,8 +160,12 @@ def main():
     sim.reset()
     # Now we are ready!
     print("[INFO]: Setup complete...")
+
+    # create ihmc parser
+    ihmc = ParseIHMC(Path(args_cli.path), 'valkyrie')
+
     # Run the simulator
-    run_simulator(sim, scene_entities, scene_origins)
+    run_simulator(sim, scene_entities, scene_origins, ihmc)
 
 
 if __name__ == "__main__":
