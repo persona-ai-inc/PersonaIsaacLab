@@ -25,7 +25,7 @@ class HumanoidEnvCfg(DirectRLEnvCfg):
     decimation = 2
     action_scale = 1.0
     action_space = 21
-    observation_space = 75
+    observation_space = 151
     state_space = 0
 
     # simulation

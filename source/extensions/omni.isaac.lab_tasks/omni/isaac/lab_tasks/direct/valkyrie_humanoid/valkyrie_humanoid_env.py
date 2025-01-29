@@ -24,8 +24,8 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     episode_length_s = 15.0
     decimation = 2
     action_scale = 1.0
-    action_space = 21
-    observation_space = 75
+    action_space = 59
+    observation_space = 189
     state_space = 0
 
     # simulation
