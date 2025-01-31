@@ -230,7 +230,7 @@ class ValkyrieEnvCfg(DirectRLEnvCfg):
     dof_vel_scale: float = 0.1
 
     death_cost: float = -1.0
-    termination_height: float = 1.1
+    termination_height: float = 0.6
 
     angular_velocity_scale: float = 0.25
     contact_force_scale: float = 0.01
