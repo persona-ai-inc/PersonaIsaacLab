@@ -65,6 +65,7 @@ class LocomotionEnv(DirectRLEnv):
 
     def _apply_action(self):
         forces = self.action_scale * self.joint_gears * self.actions
+        #print(forces)
         self.robot.set_joint_effort_target(forces, joint_ids=self._joint_dof_idx)
 
     def _compute_intermediate_values(self):
