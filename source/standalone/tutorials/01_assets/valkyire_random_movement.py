@@ -33,6 +33,7 @@ simulation_app = app_launcher.app
 """Rest everything follows."""
 
 import torch
+import time
 
 import omni.isaac.core.utils.prims as prim_utils
 
@@ -45,7 +46,7 @@ from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 ## 
 # Pre-defined configs
 ##
-from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
+from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG, VALKYRIE_CFG_NO_HANDS_HIGH_VEL_LIMIT_STARTING_POS_TESTER  # isort:skip
 
 
 def design_scene() -> tuple[dict, list[list[float]]]:
@@ -63,7 +64,7 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     # cfg = sim_utils.UsdFileCfg(usd_path=f"{ISAAC_NUCLEUS_DIR}/Robots/SanctuaryAI/Phoenix/phoenix.usd")
     # cfg.func("/World/Robots/Sanct", cfg, translation=(0.0, 0.0, 0.01))
 
-    valkCfg = VALKYRIE_CFG.copy() # type: ignore
+    valkCfg = VALKYRIE_CFG_NO_HANDS_HIGH_VEL_LIMIT_STARTING_POS_TESTER.copy() # type: ignore
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
 
@@ -103,6 +104,7 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
     count = 0
+    sim.pause()
     # Simulation loop
     while simulation_app.is_running():
         # Reset
@@ -124,7 +126,7 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
             robot.write_joint_state_to_sim(joint_pos, joint_vel)
             # clear internal buffers
             robot.reset()
-            print("[INFO]: Resetting robot state...")
+            #print("[INFO]: Resetting robot state...")
         # Apply random action
         # -- generate random joint efforts
         efforts = torch.randn_like(robot.data.joint_pos) * 5.0
