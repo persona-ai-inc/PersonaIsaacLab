@@ -37,7 +37,7 @@ class ValkyrieRewards(RewardsCfg):
         weight=0.25,
         params={
             "command_name": "base_velocity",
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_ankle_roll_link"),
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=["leftFoot", "rightFoot"]),
             "threshold": 0.4,
         },
     )
@@ -45,8 +45,8 @@ class ValkyrieRewards(RewardsCfg):
         func=mdp.feet_slide,
         weight=-0.1,
         params={
-            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_ankle_roll_link"),
-            "asset_cfg": SceneEntityCfg("robot", body_names=".*_ankle_roll_link"),
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=["leftFoot", "rightFoot"]),
+            "asset_cfg": SceneEntityCfg("robot", body_names=["leftFoot", "rightFoot"]),
         },
     )
 
@@ -54,13 +54,13 @@ class ValkyrieRewards(RewardsCfg):
     dof_pos_limits = RewTerm(
         func=mdp.joint_pos_limits,
         weight=-1.0,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_ankle_pitch_joint", ".*_ankle_roll_joint"])},
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*AnklePitch", ".*AnkleRoll"])},
     )
     # Penalize deviation from default of the joints that are not essential for locomotion
     joint_deviation_hip = RewTerm(
         func=mdp.joint_deviation_l1,
         weight=-0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*_hip_yaw_joint", ".*_hip_roll_joint"])},
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*HipYaw", ".*HipRoll"])},
     )
     joint_deviation_arms = RewTerm(
         func=mdp.joint_deviation_l1,
@@ -69,11 +69,10 @@ class ValkyrieRewards(RewardsCfg):
             "asset_cfg": SceneEntityCfg(
                 "robot",
                 joint_names=[
-                    ".*_shoulder_pitch_joint",
-                    ".*_shoulder_roll_joint",
-                    ".*_shoulder_yaw_joint",
-                    ".*_elbow_pitch_joint",
-                    ".*_elbow_roll_joint",
+                    ".*ShoulderPitch",
+                    ".*ShoulderRoll",
+                    ".*ShoulderYaw",
+                    ".*ElbowPitch",
                 ],
             )
         },
@@ -85,13 +84,19 @@ class ValkyrieRewards(RewardsCfg):
             "asset_cfg": SceneEntityCfg(
                 "robot",
                 joint_names=[
-                    ".*_five_joint",
-                    ".*_three_joint",
-                    ".*_six_joint",
-                    ".*_four_joint",
-                    ".*_zero_joint",
-                    ".*_one_joint",
-                    ".*_two_joint",
+                    ".*ThumbRoll",
+                    ".*ThumbPitch1",
+                    ".*ThumbPitch2",
+                    ".*ThumbPitch3",
+                    ".*IndexFingerPitch1",
+                    ".*IndexFingerPitch2",
+                    ".*IndexFingerPitch3",
+                    ".*MiddleFingerPitch1",
+                    ".*MiddleFingerPitch2",
+                    ".*MiddleFingerPitch3",
+                    ".*PinkyPitch1",
+                    ".*PinkyPitch2",
+                    ".*PinkyPitch3",
                 ],
             )
         },
@@ -99,7 +104,7 @@ class ValkyrieRewards(RewardsCfg):
     joint_deviation_torso = RewTerm(
         func=mdp.joint_deviation_l1,
         weight=-0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names="torso_joint")},
+        params={"asset_cfg": SceneEntityCfg("robot", joint_names=["torsoPitch","torsoRoll","torsoYaw"])},
     )
 
 
@@ -112,13 +117,13 @@ class ValkyrieRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         super().__post_init__()
         # Scene
         self.scene.robot = VALKYRIE_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/torso_link"
+        self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/torso"
 
         # Randomization
         self.events.push_robot = None
         self.events.add_base_mass = None
         self.events.reset_robot_joints.params["position_range"] = (1.0, 1.0)
-        self.events.base_external_force_torque.params["asset_cfg"].body_names = ["torso_link"]
+        self.events.base_external_force_torque.params["asset_cfg"].body_names = ["torso"]
         self.events.reset_base.params = {
             "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (-3.14, 3.14)},
             "velocity_range": {
@@ -138,11 +143,11 @@ class ValkyrieRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.rewards.action_rate_l2.weight = -0.005
         self.rewards.dof_acc_l2.weight = -1.25e-7
         self.rewards.dof_acc_l2.params["asset_cfg"] = SceneEntityCfg(
-            "robot", joint_names=[".*_hip_.*", ".*_knee_joint"]
+            "robot", joint_names=[".*Hip.*", ".*Knee.*"]
         )
         self.rewards.dof_torques_l2.weight = -1.5e-7
         self.rewards.dof_torques_l2.params["asset_cfg"] = SceneEntityCfg(
-            "robot", joint_names=[".*_hip_.*", ".*_knee_joint", ".*_ankle_.*"]
+            "robot", joint_names=[".*Hip.*", ".*Knee.*", ".*Ankle.*"]
         )
 
         # Commands
@@ -151,7 +156,7 @@ class ValkyrieRoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.commands.base_velocity.ranges.ang_vel_z = (-1.0, 1.0)
 
         # terminations
-        self.terminations.base_contact.params["sensor_cfg"].body_names = "torso_link"
+        self.terminations.base_contact.params["sensor_cfg"].body_names = "torso"
 
 
 @configclass
