@@ -33,7 +33,7 @@ VALKYRIE_CFG = ArticulationCfg(
         ),
     ),
     init_state=ArticulationCfg.InitialStateCfg(
-        pos=(0.0, 0.0, 1.0),
+        pos=(0.0, 0.0, 1.2),
         joint_vel={".*": 0.0},
     ),
     soft_joint_pos_limit_factor=0.9,
