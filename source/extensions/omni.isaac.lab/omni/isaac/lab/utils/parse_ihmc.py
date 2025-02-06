@@ -1,3 +1,4 @@
+
 import scipy.io as sio
 import numpy as np 
 from pathlib import Path, PosixPath
@@ -24,9 +25,9 @@ class ParseIHMC:
         self.joint_names = []
         self.num_joints = 0
         self.num_time_steps = 0
-        self.q = np.array([])
-        self.qd = np.array([])
-        self.tau = np.array([])
+        self.q = np.array([])       # num_time_steps x num_joints
+        self.qd = np.array([])      # num_time_steps x num_joints
+        self.tau = np.array([])     # num_time_steps x num_joints
 
         # load data
         contents = sio.loadmat(self.file)
@@ -117,23 +118,27 @@ class ParseIHMC:
         Args:
             joints: a list of joint names in a desired order
         """
+        
+        for index_new, name_new in enumerate(joints):
+            index_old = self.joint_names.index(name_new)
 
-        for index_new, joint in enumerate(joints):
-            index_old = self.joint_names.index(joint)
-
-            temp = self.q[:,index_new]
+            q_temp = self.q[:,index_new].copy()
             self.q[:,index_new] = self.q[:,index_old]
-            self.q[:,index_old] = temp
+            self.q[:,index_old] = q_temp
 
-            temp = self.qd[:,index_new]
+            qd_temp = self.qd[:,index_new].copy()
             self.qd[:,index_new] = self.qd[:,index_old]
-            self.qd[:,index_old] = temp
+            self.qd[:,index_old] = qd_temp
 
-            temp = self.tau[:,index_new]
+            tau_temp = self.tau[:,index_new].copy()
             self.tau[:,index_new] = self.tau[:,index_old]
-            self.tau[:,index_old] = temp
+            self.tau[:,index_old] = tau_temp
 
-        self.joint_names = joints
+            name_tmp = self.joint_names[index_new]
+            self.joint_names[index_new] = self.joint_names[index_old]
+            self.joint_names[index_old] = name_tmp
+        
+        
 
     def plotJointPosition(self, joint_name):
         """ Plot position of a given joint over time"""
@@ -165,19 +170,4 @@ class ParseIHMC:
         plt.title(joint_name)
         plt.show()
 
-if __name__ == '__main__':
-    print('inja 1')
-    path = Path('/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat')
-    ihmc = ParseIHMC(path, 'valkyrie')
-    print(ihmc.joint_names)
-    print('inja 2')
-
-    q, qd, tau = ihmc.getStateTorque("leftElbowPitch", np.array([0,1,2,4,5]))
-    print(q)    
-    print(qd)    
-    print(tau)    
-    print('inja 3')
-
-    ihmc.plotJointPosition('leftKneePitch')    
-    # ihmc.plotJointPosition('rightAnkleRoll')    
 

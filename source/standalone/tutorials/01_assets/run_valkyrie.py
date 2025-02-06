@@ -17,13 +17,17 @@
 
 import argparse
 from pathlib import Path
+import time
+import numpy as np
 
 from omni.isaac.lab.app import AppLauncher
 from omni.isaac.lab.utils import ParseIHMC
 
+import matplotlib.pyplot as plt
+
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on spawning and interacting with an articulation.")
-path = '/home/oheidari/DataAndVideos/Valkyrie/20250128_1127_valkyrie_testFlatGroundWalking/20250128_1127_valkyrie_testFlatGroundWalking_jointStates.mat'
+path = '/home/oheidari/DataAndVideos/Valkyrie/20250129_1208_valkyrie_testFlatGroundWalking/20250129_1208_valkyrie_testFlatGroundWalking_jointStates.mat'
 parser.add_argument("--ihmc_joint_states_file", default=path, type=str, help="joint_states file exported from ihmc")
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
@@ -97,42 +101,81 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
     #   the dictionary. This dictionary is replaced by the InteractiveScene class in the next tutorial.
     robot = entities["valkyrie"]
     joint_names = robot.joint_names
-    print(joint_names)
+
+    # ihmc.plotJointPosition('rightKneePitch')
+    # ihmc.plotJointTorque('rightKneePitch')
+    
+    ihmc.setJointOrder(joint_names)
+
+    # ihmc.plotJointPosition('rightKneePitch')
+    # ihmc.plotJointTorque('rightKneePitch')
+
     right_elbow_pitch_index = joint_names.index('rightElbowPitch')
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
+    print('sim_dt: ', sim_dt)
     count = 0
     
+    defatul_joint_pos, default_joint_vel = robot.data.default_joint_pos.clone(), robot.data.default_joint_vel.clone()
+    print('defatul_joint_pos\n', defatul_joint_pos)
+    print('default_joint_vel\n', default_joint_vel)
+
+    default_root_state = robot.data.default_root_state.clone()
+    print('default_root_state\n', default_root_state)
+
+    print(robot.body_names)
+    joint_id, joint_name = robot.find_joints('rightElbowPitch')
+    print("===>> ", joint_id, joint_name)
+
+    knee_joint_id, joint_name = robot.find_joints('rightKneePitch')
+    print("===>> ", knee_joint_id, joint_name)
+
+    # efforts = []
+    # count = 0
+    # while count < 8000:
+    #     q, qd, effort = ihmc.getStateTorque('rightKneePitch', np.array([count]) )
+    #     efforts.append(effort)
+    #     count += 1
+    # plt.plot(efforts)
+    # plt.show()
+
     # Simulation loop
     while simulation_app.is_running():
         # Reset
         if count % ihmc.num_time_steps == 0:
+        # if count % 50000 == 0:
             # reset counter
             count = 0
             # reset the scene entities
             # root state
             # we offset the root state by the origin since the states are written in simulation world frame
             # if this is not done, then the robots will be spawned at the (0, 0, 0) of the simulation world
-            root_state = robot.data.default_root_state.clone()
-            # root_state[:, :3] += origins
-            # robot.write_root_link_pose_to_sim(root_state[:, :7])
-            # robot.write_root_com_velocity_to_sim(root_state[:, 7:])
+            # root_state = robot.data.default_root_state.clone()
+            
+            # robot.write_root_link_pose_to_sim(default_root_state[:, :7])
+            # robot.write_root_com_velocity_to_sim(default_root_state[:, 7:])
             # set joint positions with some noise
-            joint_pos, joint_vel = robot.data.default_joint_pos.clone(), robot.data.default_joint_vel.clone()
-            print('joint pos size: ', joint_pos.size())
-            # joint_pos[0,25] += 0.5
-            joint_pos, joint_vel, joint_effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
-            robot.write_joint_state_to_sim(torch.from_numpy(joint_pos), torch.from_numpy(joint_vel) )
+            
+            # joint_pos, joint_vel, joint_effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+            # robot.write_joint_state_to_sim(torch.from_numpy(joint_pos), torch.from_numpy(joint_vel) )
+            
+            # robot.write_joint_state_to_sim(defatul_joint_pos, default_joint_vel )
             # clear internal buffers
             robot.reset()
             print("[INFO]: Resetting robot state...")
+        
+        
         # Apply random action
         # -- generate random joint efforts
         # efforts = torch.randn_like(robot.data.joint_pos) 
-        q, qd, efforts = ihmc.getStateTorqueOneTimeStepAllJoints(count)
-        # efforts[0, 25] = 40.0
+        q, qd, effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
+        # q, qd, effort = ihmc.getStateTorque('rightKneePitch', np.array([count]) )
+        
+        robot.write_joint_state_to_sim(torch.from_numpy(q), torch.from_numpy(qd) )
+
+        # efforts.append(effort)
         # -- apply action to the robot
-        robot.set_joint_effort_target(torch.from_numpy(efforts))
+        # robot.set_joint_effort_target(torch.from_numpy(0.05*effort).float())
         # -- write data to sim
         robot.write_data_to_sim()
         # Perform step
@@ -149,7 +192,7 @@ def main():
     sim_cfg = sim_utils.SimulationCfg(device=args_cli.device)
     sim = SimulationContext(sim_cfg)
     # Set main camera
-    sim.set_camera_view((2.5, 0.0, 4.0), (0.0, 0.0, 2.0))
+    sim.set_camera_view((3.5, 0.0, 2.0), (0.0, 0.0, 1.0))
     # Design scene
     scene_entities, scene_origins = design_scene()
     scene_origins = torch.tensor(scene_origins, device=sim.device)
@@ -160,14 +203,11 @@ def main():
 
     # create ihmc parser
     ihmc = ParseIHMC(Path(args_cli.ihmc_joint_states_file), 'valkyrie')
-    joint_names = scene_entities["valkyrie"].joint_names
     
-    print(ihmc.joint_names)
-    print(joint_names)
+    # print(ihmc.joint_names)
+    # print(joint_names)
 
-    ihmc.setJointOrder(joint_names)
-
-    print(ihmc.joint_names)
+    # print(ihmc.joint_names)
     
     # Run the simulator
     run_simulator(sim, scene_entities, scene_origins, ihmc)

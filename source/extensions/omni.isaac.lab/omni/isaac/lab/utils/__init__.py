@@ -14,4 +14,4 @@ from .modifiers import *
 from .string import *
 from .timer import Timer
 from .types import *
-from .parse_ihmc import *
+from .parse_ihmc import ParseIHMC
