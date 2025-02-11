@@ -20,8 +20,9 @@ from pathlib import Path
 import time
 import numpy as np
 
-from omni.isaac.lab.app import AppLauncher
-from omni.isaac.lab.utils import ParseIHMC
+from isaaclab.app import AppLauncher
+from isaaclab.utils import ParseIHMC
+
 
 import matplotlib.pyplot as plt
 
@@ -42,18 +43,18 @@ simulation_app = app_launcher.app
 
 import torch
 
-import omni.isaac.core.utils.prims as prim_utils
+import isaacsim.core.utils.prims as prim_utils
 
-import omni.isaac.lab.sim as sim_utils
-from omni.isaac.lab.assets import Articulation
-from omni.isaac.lab.sim import SimulationContext
+import isaaclab.sim as sim_utils
+from isaaclab.assets import Articulation
+from isaaclab.sim import SimulationContext
 
-from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
+from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 
 ## 
 # Pre-defined configs
 ##
-from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
+from isaaclab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
 
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
