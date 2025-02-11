@@ -13,7 +13,7 @@ a more user-friendly way.
 """Launch Isaac Sim Simulator first."""
 
 import argparse
-import sys
+import sys, psutil
 
 from omni.isaac.lab.app import AppLauncher
 
@@ -175,6 +175,9 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # https://skrl.readthedocs.io/en/latest/api/utils/runner.html
     runner = Runner(env, agent_cfg)
 
+    # runner.agent.track_data("Resource / CPU usage", psutil.cpu_percent())
+    # action_space = runner.agent.action_space
+    
     # run training
     runner.run()
 
