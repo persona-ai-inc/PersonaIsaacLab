@@ -112,7 +112,7 @@ class ParseIHMC:
 
     def setJointOrder(self, joints: list[str]) -> None:
         """set the order of the joints. The exported joints order from ihmc does not necessarily
-        match the the joint order in Isaac Sim. bfs search algorithm used in Isaac Sim
+        match the the joint order in Isaac Sim. BFS search algorithm used in Isaac Sim
         https://isaac-sim.github.io/IsaacLab/main/source/migration/migrating_from_isaacgymenvs.html#:~:text=Isaac%20Lab%20APIs.-,Articulation%20Joint%20Order,-%23
 
         Args:

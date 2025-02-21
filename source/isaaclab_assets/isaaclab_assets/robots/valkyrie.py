@@ -14,7 +14,6 @@ from isaaclab.actuators import ActuatorNetMLPCfg, DCMotorCfg, ImplicitActuatorCf
 from isaaclab.assets.articulation import ArticulationCfg
 from isaaclab.sim.converters import UrdfConverter, UrdfConverterCfg
 
-
 import os
 
 # get current path, remove everything after "personaisaaclab"
@@ -22,7 +21,7 @@ root_folder_path = os.getcwd().split("PersonaIsaacLab")[0] + "PersonaIsaacLab/"
 
 VALKYRIE_CFG = ArticulationCfg(
     spawn=sim_utils.UrdfFileCfg(
-        fix_base=True,
+        fix_base=False,
         merge_fixed_joints=False,
         make_instanceable=False,
         activate_contact_sensors=True,
