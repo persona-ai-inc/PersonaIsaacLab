@@ -72,7 +72,6 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     # cfg.func("/World/Robots/Sanct", cfg, translation=(0.0, 0.0, 0.01))
 
     valkCfg = VALKYRIE_CFG.copy() # type: ignore
-    print('valkCfg\n', valkCfg)
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
 

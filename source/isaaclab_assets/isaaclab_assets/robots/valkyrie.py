@@ -12,6 +12,8 @@ Reference: https://github.com/unitreerobotics/unitree_ros
 import isaaclab.sim as sim_utils
 from isaaclab.actuators import ActuatorNetMLPCfg, DCMotorCfg, ImplicitActuatorCfg
 from isaaclab.assets.articulation import ArticulationCfg
+from isaaclab.sim.converters import UrdfConverter, UrdfConverterCfg
+
 
 import os
 
@@ -20,12 +22,12 @@ root_folder_path = os.getcwd().split("PersonaIsaacLab")[0] + "PersonaIsaacLab/"
 
 VALKYRIE_CFG = ArticulationCfg(
     spawn=sim_utils.UrdfFileCfg(
-        fix_base=False,
+        fix_base=True,
         merge_fixed_joints=False,
         make_instanceable=False,
         activate_contact_sensors=True,
-        joint_drive=UrdfConverterCfg.JointDriveCfg(drive_type='force', target_type='position',
-              gains=UrdfConverterCfg.JointDriveCfg.PDGainsCfg(stiffness=<dataclasses._MISSING_TYPE object at 0x700bd4beac50>, damping=None)),
+        joint_drive=UrdfConverterCfg.JointDriveCfg(drive_type='force', target_type='position', 
+                                                   gains=UrdfConverterCfg.JointDriveCfg.PDGainsCfg(stiffness=10, damping=None)),
         # TODO make this prettier somehow.
         asset_path=root_folder_path
         + "external/valkyrie/src/main/resources/models/val_description/urdf/valkyrie_sim.urdf",

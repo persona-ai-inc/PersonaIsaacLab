@@ -275,14 +275,11 @@ def _validate(obj: object, prefix: str = "") -> list[str]:
         return missing_fields
 
     for key, value in obj_dict.items():
-        # print('key:\n', key)
-        # print('value:\n', value)
         # disregard builtin attributes
         if key.startswith("__"):
             continue
         current_path = f"{prefix}.{key}" if prefix else key
         missing_fields.extend(_validate(value, prefix=current_path))
-        # print('missing_fields: ', missing_fields)
 
     # raise an error only once at the top-level call
     if prefix == "" and missing_fields:
