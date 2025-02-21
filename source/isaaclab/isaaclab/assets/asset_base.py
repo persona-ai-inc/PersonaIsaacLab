@@ -60,6 +60,7 @@ class AssetBase(ABC):
             RuntimeError: If no prims found at input prim path or prim path expression.
         """
         # check that the config is valid
+        
         cfg.validate()
         # store inputs
         self.cfg = cfg

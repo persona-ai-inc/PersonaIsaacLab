@@ -24,6 +24,8 @@ VALKYRIE_CFG = ArticulationCfg(
         merge_fixed_joints=False,
         make_instanceable=False,
         activate_contact_sensors=True,
+        joint_drive=UrdfConverterCfg.JointDriveCfg(drive_type='force', target_type='position',
+              gains=UrdfConverterCfg.JointDriveCfg.PDGainsCfg(stiffness=<dataclasses._MISSING_TYPE object at 0x700bd4beac50>, damping=None)),
         # TODO make this prettier somehow.
         asset_path=root_folder_path
         + "external/valkyrie/src/main/resources/models/val_description/urdf/valkyrie_sim.urdf",
@@ -97,7 +99,11 @@ VALKYRIE_CFG = ArticulationCfg(
             damping=1e+5,
         ),
         "hokuyo_joint": ImplicitActuatorCfg(
-            joint_names_expr=["hokuyo_joint"], stiffness=0.0, damping=0.01
+            joint_names_expr=["hokuyo_joint"], 
+            effort_limit=26.0,
+            velocity_limit=50.0,
+            stiffness=1e+5, 
+            damping=1e+5
         ),
         "rightHipYaw": ImplicitActuatorCfg(
             joint_names_expr=["rightHipYaw"],

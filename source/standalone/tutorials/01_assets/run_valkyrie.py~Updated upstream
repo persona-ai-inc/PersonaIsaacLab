@@ -20,9 +20,8 @@ from pathlib import Path
 import time
 import numpy as np
 
-from isaaclab.app import AppLauncher
-from isaaclab.utils import ParseIHMC
-
+from omni.isaac.lab.app import AppLauncher
+from omni.isaac.lab.utils import ParseIHMC
 
 import matplotlib.pyplot as plt
 
@@ -43,18 +42,18 @@ simulation_app = app_launcher.app
 
 import torch
 
-import isaacsim.core.utils.prims as prim_utils
+import omni.isaac.core.utils.prims as prim_utils
 
-import isaaclab.sim as sim_utils
-from isaaclab.assets import Articulation, ArticulationCfg
-from isaaclab.sim import SimulationContext
+import omni.isaac.lab.sim as sim_utils
+from omni.isaac.lab.assets import Articulation
+from omni.isaac.lab.sim import SimulationContext
 
-from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
+from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 
 ## 
 # Pre-defined configs
 ##
-from isaaclab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
+from omni.isaac.lab_assets import CARTPOLE_CFG, VALKYRIE_CFG  # isort:skip
 
 def design_scene() -> tuple[dict, list[list[float]]]:
     """Designs the scene."""
@@ -72,7 +71,6 @@ def design_scene() -> tuple[dict, list[list[float]]]:
     # cfg.func("/World/Robots/Sanct", cfg, translation=(0.0, 0.0, 0.01))
 
     valkCfg = VALKYRIE_CFG.copy() # type: ignore
-    print('valkCfg\n', valkCfg)
     valkCfg.prim_path = "/World/Robots/Valk1"
     valkyrie = Articulation(cfg=valkCfg)
 
@@ -173,13 +171,13 @@ def run_simulator(sim: sim_utils.SimulationContext, entities: dict[str, Articula
         q, qd, effort = ihmc.getStateTorqueOneTimeStepAllJoints(count)
         # q, qd, effort = ihmc.getStateTorque('rightKneePitch', np.array([count]) )
         
-        robot.write_joint_state_to_sim(torch.from_numpy(q), torch.from_numpy(qd) )
+        # robot.write_joint_state_to_sim(torch.from_numpy(q), torch.from_numpy(qd) )
 
         # efforts.append(effort)
         # -- apply action to the robot
         # robot.set_joint_effort_target(torch.from_numpy(0.05*effort).float())
         # -- write data to sim
-        robot.write_data_to_sim()
+        # robot.write_data_to_sim()
         # Perform step
         sim.step()
         # Increment counter
